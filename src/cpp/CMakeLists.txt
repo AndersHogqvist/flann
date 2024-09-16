@@ -4,7 +4,7 @@ add_definitions(-D_FLANN_VERSION=${FLANN_VERSION})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/flann/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/flann/config.h)
 
-file(GLOB_RECURSE C_SOURCES flann.cpp)
+file(GLOB_RECURSE C_SOURCES flann.cpp util/serialization.cpp)
 file(GLOB_RECURSE CPP_SOURCES flann_cpp.cpp util/serialization.cpp)
 file(GLOB_RECURSE CU_SOURCES *.cu)
 
@@ -24,10 +24,9 @@ endif()
 add_library(flann_cpp SHARED ${CPP_SOURCES})
 target_link_directories(flann_cpp PRIVATE ${LZ4_LIBRARY_DIRS})
 target_link_libraries(flann_cpp PRIVATE ${LZ4_LIBRARIES})
-# export lz4 headers, so that MSVC to creates flann_cpp.lib
 set_target_properties(flann_cpp PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS YES)
 
-set(flann_install_targets flann_cpp)
+list(APPEND flann_install_targets flann_cpp)
 
 if (BUILD_CUDA_LIB)
     SET(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS};-DFLANN_USE_CUDA;-Xcudafe \"--diag_suppress=partial_override\" ;-gencode=arch=compute_52,code=\"sm_52,compute_52\";-gencode=arch=compute_61,code=\"sm_61,compute_61\"")
